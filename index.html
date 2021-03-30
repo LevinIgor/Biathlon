@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans+Condensed:wght@300&display=swap" rel="stylesheet">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <!--
+    [x] Задание: Создать таблицу с результатами стрельбы в биатлонной гонке.
+    [x] Данные: при загрузке страницы сгенерировать правдоподобные данные.
+Детали:
+    [x] Изначально таблица отсортирована согласно финальным местам в гонке
+    [x] Дополнительно должна быть возможность отсортировать по: 
+       - [x]имени; 
+       - [x]попаданиям ;
+       - [x]скорострельности;
+       - [x]Поиск по имени.
+    [x] Результат разместить на GitHub.
+       Ссылку на репозиторий и CV скинуть на 
+       hiring@lambdabird.com-->
+
+    <div class="wrapper" id="app">
+        <div class="head">
+            <p>Таблица с результатами стрельбы в биатлонной гонке.</p>
+            <input v-model="searchValue" type="text" placeholder="Имя для поиска">
+        </div>
+        <div class="table">
+            <table>
+
+                <!-- Заголовки таблицы -->
+                <tr>
+                    <th @click="sortByNumber"><button>Место</button></th>
+                    <th @click="sortBycountry"><button>Страна</button></th>
+                    <th @click="sortByName"><button>Биатлонист</button></th>
+                    <th @click="sortByHits"><button>% Попаданий</button></th>
+                    <th @click="sortBySpeed"><button>Скорострельность</button></th>
+                    <th @click="sortByNumber"><button>Счёт</button></th>
+                </tr>
+
+
+                <tr v-for="(item, index) in biathletes ">
+                    <td> {{item.number}} </td>
+                    <td>{{item.country}}</td>
+                    <td>{{item.first_name}} {{item.second_name}}</td>
+                    <td>{{item.hits}}</td>
+                    <td>{{item.speed_time}}</td>
+                    <td>{{item.score}}</td>
+                </tr>
+            </table>
+        </div>
+        <div class="desc">
+            <p>*Скорострельность измеряеться в выстрелов в минуту</p>
+            <p>Для сортировки нажмите на соответствующий заголовок таблицы </p>
+        </div>
+    </div>
+
+</body>
+
+
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            // Массив обьектов, с инф про биатлонистов
+            biathletes: [{
+                country: "Ukraine ",
+                first_name: "Georg ",
+                second_name: "Fantolov ",
+                hits: 70,
+                speed_time: 4,
+                score: 10,
+                number: 0
+            }, {
+                country: "Ukraine ",
+                first_name: "Vasiliy ",
+                second_name: "Nikiforov ",
+                hits: 79,
+                speed_time: 7,
+                score: 19,
+                number: 0
+            }, {
+                country: "Ukraine ",
+                first_name: "Nikita ",
+                second_name: "Kilimov ",
+                hits: 65,
+                speed_time: 3,
+                score: 12,
+                number: 0
+            }, {
+                country: "Ukraine ",
+                first_name: "Bogdan ",
+                second_name: "Nulov ",
+                hits: 43,
+                speed_time: 10,
+                score: 25,
+                number: 0
+            }, {
+                country: "Ukraine ",
+                first_name: "Bilil ",
+                second_name: "Dantol ",
+                hits: 80,
+                speed_time: 5,
+                score: 18,
+                number: 0
+            }, {
+                country: "Spain ",
+                first_name: "Elesan ",
+                second_name: "Merlinso ",
+                hits: 78,
+                speed_time: 7,
+                score: 900,
+                number: 0
+            }, {
+                country: "Denmark ",
+                first_name: "Reorg ",
+                second_name: "Hilonshvali ",
+                hits: 85,
+                speed_time: 7,
+                score: 8,
+                number: 0
+            }, {
+                country: "Ukraine ",
+                first_name: "Milon ",
+                second_name: "Milonov ",
+                hits: 56,
+                speed_time: 8,
+                score: 0,
+                number: 0
+            }, {
+                country: "Ukraine ",
+                first_name: "Mukalay ",
+                second_name: "Elantev ",
+                hits: 40,
+                speed_time: 12,
+                score: 7,
+                number: 0
+            }, {
+                country: "Poland ",
+                first_name: "Milon ",
+                second_name: "Super ",
+                hits: 90,
+                speed_time: 10,
+                score: 6,
+                number: 0
+            }, {
+                country: "Russia ",
+                first_name: "Ivan ",
+                second_name: "Ivanov ",
+                hits: 70,
+                speed_time: 5,
+                score: 99,
+                number: 0
+            }, ],
+            currentSort: "none ",
+            searchValue: "",
+            second: [],
+        },
+        watch: {
+            searchValue() {
+                this.filteredList();
+            }
+
+        },
+        methods: {
+            sortByNumber() {
+                if (this.currentSort !== "placeDown ") {
+                    this.biathletes.sort((a, b) => a.score < b.score ? 1 : -1);
+                    for (let index = 0; index < this.biathletes.length; index++) {
+                        this.biathletes[index].number = index + 1;
+                    }
+                    this.currentSort = "placeDown "
+                } else {
+                    this.biathletes.sort((a, b) => a.score > b.score ? 1 : -1);
+                    for (let index = this.biathletes.length - 1; index >= 0; index--) {
+                        this.biathletes[index].number = this.biathletes.length - index;
+                    }
+                    this.currentSort = "placeUp "
+                }
+            },
+            sortBycountry() {
+                if (this.currentSort !== "countryDown") {
+                    this.currentSort = "countryDown"
+                    this.biathletes.sort(function(a, b) {
+                        if (a.country < b.country) {
+                            return -1;
+                        }
+                        if (a.country > b.country) {
+                            return 1;
+                        }
+                        return 0;
+                    })
+                } else {
+                    this.currentSort = "countryUp"
+                    this.biathletes.sort(function(a, b) {
+                        if (a.country > b.country) {
+                            return -1;
+                        }
+                        if (a.country < b.country) {
+                            return 1;
+                        }
+                        return 0;
+                    })
+                }
+
+            },
+            sortByName() {
+                if (this.currentSort !== "nameDown") {
+                    this.currentSort = "nameDown"
+                    this.biathletes.sort(function(a, b) {
+                        if (a.first_name < b.first_name) {
+                            return -1;
+                        }
+                        if (a.first_name > b.first_name) {
+                            return 1;
+                        }
+                        return 0;
+                    })
+                } else {
+                    this.currentSort = "nameUp"
+                    this.biathletes.sort(function(a, b) {
+                        if (a.first_name > b.first_name) {
+                            return -1;
+                        }
+                        if (a.first_name < b.first_name) {
+                            return 1;
+                        }
+                        return 0;
+                    })
+                }
+            },
+            sortByHits() {
+                if (this.currentSort !== "hitsDown ") {
+                    this.biathletes.sort((a, b) => a.hits < b.hits ? 1 : -1);
+                    this.currentSort = "hitsDown "
+                } else {
+                    this.biathletes.sort((a, b) => a.hits > b.hits ? 1 : -1);
+                    this.currentSort = "hitsUp "
+                }
+            },
+            sortBySpeed() {
+                if (this.currentSort !== "speedDown") {
+                    this.biathletes.sort((a, b) => a.speed_time < b.speed_time ? 1 : -1);
+                    this.currentSort = "speedDown"
+                } else {
+                    this.biathletes.sort((a, b) => a.speed_time > b.speed_time ? 1 : -1);
+                    this.currentSort = "speedUp"
+                }
+            },
+            filteredList() {
+                this.biathletes = this.second;
+                this.biathletes = this.biathletes.filter(post => {
+                    return post.first_name.toLowerCase().includes(this.searchValue.toLowerCase())
+                })
+            }
+        },
+
+        mounted() {
+            this.sortByNumber();
+            this.second = this.biathletes;
+        },
+        computed: {
+            filteredList() {
+                return this.biathletes.filter(post => {
+                    return post.first_name.toLowerCase().includes(this.searchValue.toLowerCase())
+                })
+            }
+        }
+
+    })
+</script>
+
+<style>
+    body {
+        font-family: Glyphs;
+        margin-top: 90px;
+    }
+    
+    button {
+        font-size: 15px;
+        padding: 5px;
+        margin: 0;
+        background-color: white;
+        border: none;
+        cursor: pointer;
+    }
+    
+    button:active,
+    button:focus {
+        outline: none;
+        background-color: rgba(218, 245, 225, 0.972);
+    }
+    
+    .head {
+        font-size: 25px;
+        text-align: center;
+        padding-bottom: 10px;
+    }
+    
+    .desc {
+        text-align: end;
+    }
+    
+    table {
+        margin: auto;
+        border: 2px solid black;
+        border-collapse: separate;
+        border-spacing: 5px;
+        background: #ffffff;
+        border: 10px solid #312f28;
+        border-radius: 20px;
+    }
+    
+    td {
+        text-align: center;
+    }
+</style>
+
+</html>
