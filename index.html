@@ -32,6 +32,31 @@
             <p>Таблица с результатами стрельбы в биатлонной гонке.</p>
             <input v-model="searchValue" type="text" placeholder="Имя для поиска">
         </div>
+        <div class="addBtl">
+            <div class="addFirstName" id="newBtl">
+                <span>Add First Name</span>
+                <input type="text" v-model="newBtl.first_name">
+            </div>
+            <div class="addSecondName" id="newBtl">
+                <span>Add Second Name</span>
+                <input type="text" v-model="newBtl.second_name"></div>
+            <div class="addHits" id="newBtl">
+                <span>Add Counry</span>
+                <input type="text" v-model="newBtl.country">
+            </div>
+            <div class="addspeedTime" id="newBtl">
+                <span>Add hits</span>
+                <input type="text" v-model="newBtl.hits">
+            </div>
+            <div class="addScore" id="newBtl">
+                <span>Add score</span>
+                <input type="text" v-model="newBtl.score">
+            </div>
+            <div class="addBtlBnt">
+                <button @click="addBtl()">Add btl</button>
+            </div>
+        </div>
+
         <div class="table">
             <table>
 
@@ -68,6 +93,7 @@
 <script>
     var app = new Vue({
         el: '#app',
+
         data: {
             // Массив обьектов, с инф про биатлонистов
             biathletes: [{
@@ -162,6 +188,15 @@
             currentSort: "none ",
             searchValue: "",
             second: [],
+            newBtl: {
+                country: "",
+                first_name: "",
+                second_name: "",
+                hits: 0,
+                speed_time: 0,
+                score: 0,
+                number: 0
+            }
         },
         watch: {
             searchValue() {
@@ -170,6 +205,23 @@
 
         },
         methods: {
+            addBtl() {
+                if (this.newBtl.first_name == "" || this.newBtl.second_name == "" || this.newBtl.country == "") {
+                    alert("Please enter a country")
+                } else {
+                    this.biathletes.push(this.newBtl)
+                    this.newBtl = {
+                        country: " ",
+                        first_name: " ",
+                        second_name: " ",
+                        hits: 0,
+                        speed_time: 0,
+                        score: 0,
+                        number: 0
+                    }
+                }
+
+            },
             sortByNumber() {
                 if (this.currentSort !== "placeDown ") {
                     this.biathletes.sort((a, b) => a.score < b.score ? 1 : -1);
@@ -267,7 +319,7 @@
             this.second = this.biathletes;
         },
         computed: {
-            filteredList() {
+            filteredList2() {
                 return this.biathletes.filter(post => {
                     return post.first_name.toLowerCase().includes(this.searchValue.toLowerCase())
                 })
@@ -283,7 +335,31 @@
         margin-top: 90px;
     }
     
-    button {
+    .addBtl {
+        display: flex;
+        size: 16px;
+        font-size: 18px;
+        flex-wrap: wrap;
+        margin: 30px;
+        justify-content: center;
+    }
+    
+    .addBtl input {
+        width: 150px;
+    }
+    
+    #newBtl {
+        display: grid;
+        padding: 10px;
+        text-align: center;
+    }
+    
+    .addBtlBnt {
+        display: flex;
+        justify-content: center;
+    }
+    
+    .table button {
         font-size: 15px;
         padding: 5px;
         margin: 0;
@@ -292,8 +368,8 @@
         cursor: pointer;
     }
     
-    button:active,
-    button:focus {
+    .table button:active,
+    .table button:focus {
         outline: none;
         background-color: rgba(218, 245, 225, 0.972);
     }
